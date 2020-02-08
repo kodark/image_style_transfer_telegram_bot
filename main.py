@@ -7,9 +7,6 @@ from threading import Lock
 
 from io import BytesIO
 
-# TODO:
-# 6) пофиксить ошибки pyCharm'
-
 
 model = StyleTransferModel()
 first_image_file = {}

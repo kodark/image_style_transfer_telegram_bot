@@ -26,10 +26,10 @@ class StyleTransferModel:
         self.normalization_std = torch.tensor([0.229, 0.224, 0.225]).to(self.device)
         self.unloader = transforms.ToPILImage()
         self.normalization = Normalization(self.normalization_mean, self.normalization_std).to(self.device)
-        self.imsize = config.imsize
+        self.img_size = config.img_size
         self.loader = transforms.Compose([
-            transforms.Resize(self.imsize),
-            transforms.CenterCrop(self.imsize),
+            transforms.Resize(self.img_size),
+            transforms.CenterCrop(self.img_size),
             transforms.ToTensor()])
     
     def get_input_optimizer(self, input_img):
@@ -146,9 +146,9 @@ class ContentLoss(nn.Module):
         self.target = target.detach()
         self.loss = F.mse_loss(self.target, self.target)
     
-    def forward(self, input):
-        self.loss = F.mse_loss(input, self.target)
-        return input
+    def forward(self, input_tensor):
+        self.loss = F.mse_loss(input_tensor, self.target)
+        return input_tensor
 
 
 def gram_matrix(input):
@@ -193,10 +193,10 @@ class StyleLoss(nn.Module):
         self.target = gram_matrix(target_feature).detach()
         self.loss = F.mse_loss(self.target, self.target)
     
-    def forward(self, input):
-        G = gram_matrix(input)
+    def forward(self, input_tensor):
+        G = gram_matrix(input_tensor)
         self.loss = F.mse_loss(G, self.target)
-        return input    
+        return input_tensor
 
 
 class Normalization(nn.Module):
